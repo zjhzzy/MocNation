@@ -103,7 +103,7 @@ public class Nation_Commander implements CommandExecutor
                 // 写入
                 NationConfig.set("NationList",NationList);
                 // 扣钱
-                economy.withdrawPlayer((OfflinePlayer) Sender,Config.getInt("NationMoney",100000));
+                economy.withdrawPlayer(Sender.getName(),Config.getInt("NationMoney",100000));
                 // 发送消息
                 Sender.sendMessage(ChatColor.YELLOW+"国家创建成功,ID "+ChatColor.GOLD+"main");
                 Sender.sendMessage(ChatColor.YELLOW+"已经创建国家 "+ChatColor.GOLD+args[1]);
