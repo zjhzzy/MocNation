@@ -1,0 +1,9 @@
+name: MocNation
+version: '${project.version}'
+main: asia.mocnation.MocNation
+api-version: 1.19
+authors: [ He_xiao_feng ]
+description: 这是Nlub写的一个垃圾国家插件
+commands:
+  nat:
+    description: "这是MocNation插件的基本命令，所有操作基于这个命令"
