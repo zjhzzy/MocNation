@@ -2,6 +2,7 @@ package asia.mocnation;
 
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,6 +36,8 @@ public class Nation_Commander implements CommandExecutor
         String Player_Name_value = PlayerConfig.getString(Sender.getName()+".Name",null);
         /* 玩家所在的国家 为null就不在国家内 */
         String Player_Nation_value = PlayerConfig.getString(Sender.getName()+".Nation_Name",null);
+        /* 玩家是否为国家领导人 默认为false */
+        boolean Player_Learde_value = PlayerConfig.getBoolean(Sender.getName()+".Lender",false);
         /* 文件中的国家名 */
         String File_Nation_Name = NationConfig.getString(args[1]+".Name",null);
         if (Objects.equals(args[0], "help"))
@@ -62,8 +65,14 @@ public class Nation_Commander implements CommandExecutor
         /* Nation create [国家名] <主义> <> */
         else if (Objects.equals(args[0], "create"))
         {
+            if (args[1]=="?"||args[1]=="？")
+            {
+                Sender.sendMessage(" " + ChatColor.GREEN+"/Nation " +ChatColor.DARK_GREEN + "create [国家名]" + ChatColor.GOLD + "- " + ChatColor.YELLOW + "创建国家");
+                Sender.sendMessage(ChatColor.YELLOW+"需要 "+ChatColor.GOLD+Config.getInt("NationMoney",10000)+ChatColor.YELLOW+" 元");
+                return true;
+            }
             /* 必须不是任何一个国家内的成员且第二参数不能为null，得有配置文件中的钱 */
-            if (Player_Nation_value==null&&args[1]!=null&&File_Nation_Name==null&&economy.has(Sender.getName(),Config.getInt("Nation_Money",100000)))
+            else if (Player_Nation_value==null&&args[1]!=null&&File_Nation_Name==null&&economy.has(Sender.getName(),Config.getInt("Nation_Money",100000)))
             {
                 // 声明类
                 Nation_Class Nation = new Nation_Class();
@@ -93,6 +102,11 @@ public class Nation_Commander implements CommandExecutor
                 NationList.add(args[1]);
                 // 写入
                 NationConfig.set("NationList",NationList);
+                // 扣钱
+                economy.withdrawPlayer((OfflinePlayer) Sender,Config.getInt("NationMoney",100000));
+                // 发送消息
+                Sender.sendMessage(ChatColor.YELLOW+"国家创建成功,ID "+ChatColor.GOLD+"main");
+                Sender.sendMessage(ChatColor.YELLOW+"已经创建国家 "+ChatColor.GOLD+args[1]);
             }
             // 名字重叠
             else if (File_Nation_Name!=null)
@@ -113,6 +127,33 @@ public class Nation_Commander implements CommandExecutor
                 return false;
             }
         }
+        else if (args[0]=="ism") {
+            if (args[1]=="?"||args[1]=="？")
+            {
+                Sender.sendMessage(ChatColor.YELLOW+"使用方法："+ChatColor.GOLD+"/Nation ism [主义]");
+                Sender.sendMessage(ChatColor.YELLOW+"你要是某国家内的领导人才能使用本命令");
+                Sender.sendMessage(ChatColor.YELLOW+"[主义] 比如 共产主义 社会主义");
+                return true;
+            }
+            /* 要属于一个国家并且要为领导人 */
+            else if (Player_Nation_value!=null&&Player_Learde_value&&args[1]!=null)
+            {
+                NationConfig.set(Player_Nation_value+".Ism",args[1]);
+                Sender.sendMessage(ChatColor.YELLOW+"已将 "+ChatColor.GOLD+Player_Nation_value+ChatColor.YELLOW+" 的主义更改为 "+ChatColor.GOLD+args[1]);
+            }
+            // 不属于任何一个国家
+            else if (Player_Nation_value==null)
+            {
+                Sender.sendMessage(ChatColor.RED+"你不属于任何一个国家");
+                return false;
+            }
+            // 不是国家领导人
+            else if (!Player_Learde_value)
+            {
+                Sender.sendMessage(ChatColor.RED+"你不是国家领导人");
+                return false;
+            }
+        } 
         /*
          保存文件 用try环绕
          我也不知道为啥要这样搞IDEA自己提示的，自己理解吧
