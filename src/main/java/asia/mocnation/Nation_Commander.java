@@ -8,7 +8,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -165,7 +164,7 @@ public class Nation_Commander implements CommandExecutor
         /* Nation war true/false */
         else if (Objects.equals(args[0], "war"))
         {
-            if (args[1] == "?"||args[1]=="？")
+            if (Objects.equals(args[1], "?") || Objects.equals(args[1], "？"))
             {
                 Sender.sendMessage(ChatColor.YELLOW+"使用方法："+ChatColor.GOLD+"/Nation war true/false");
                 Sender.sendMessage(ChatColor.YELLOW+"你要是某国家内的领导人才能使用本命令");
@@ -176,17 +175,17 @@ public class Nation_Commander implements CommandExecutor
             else if (Player_Learde_value||Player_Speak_value)
             {
                 // 在一个国家内 参数为true
-                if (Player_Nation_value!=null&&Objects.equals(args[1],true))
+                if (Player_Nation_value!=null&&Objects.equals(args[1],"true"))
                 {
                     NationConfig.set(Player_Nation_value+".War",true);
                     Sender.sendMessage(ChatColor.YELLOW+"已经进入战争状态");
                 }
-                else if (Player_Nation_value!=null&&Objects.equals(args[1],false))
+                else if (Player_Nation_value!=null&&Objects.equals(args[1],"false"))
                 {
                     NationConfig.set(Player_Nation_value+".War",false);
                     Sender.sendMessage(ChatColor.YELLOW+"已经退出战争状态");
                 }
-                else if (Player_Nation_value!=null&&Objects.equals(args[1],null))
+                else if (Player_Nation_value!=null&&Objects.equals(args[1],"null"))
                 {
                     Sender.sendMessage(ChatColor.RED+"参数呢？？？");
                     return false;
@@ -206,7 +205,7 @@ public class Nation_Commander implements CommandExecutor
         /* Nation add [玩家名字] <职位> */
         else if (Objects.equals(args[0], "add"))
         {
-            if (args[1]=="？"||args[1]=="?")
+            if (Objects.equals(args[1], "？") || Objects.equals(args[1], "?"))
             {
                 Sender.sendMessage(ChatColor.YELLOW+"使用方法："+ChatColor.GOLD+"/Nation add [玩家名字]");
                 Sender.sendMessage(ChatColor.YELLOW+"你要是某国家内的领导人或者话事人才能使用本命令");
@@ -230,17 +229,17 @@ public class Nation_Commander implements CommandExecutor
                     // 如果玩家所在国家不为空
                     else if (args_File_Player_Nation_value!=null)
                     {
-                        if (args[1]==Player_Name_value)
+                        if (Objects.equals(args[1], Player_Name_value))
                         {
                             Sender.sendMessage(ChatColor.YELLOW+"我尼玛，你是sb吗？自己邀请自己？给我找BUG？");
                             return false;
                         }
-                        else if (args_File_Player_Nation_value==Player_Nation_value)
+                        else if (args_File_Player_Nation_value.equals(Player_Nation_value))
                         {
                             Sender.sendMessage(ChatColor.YELLOW+"你自己家的人，你没事邀请啥啊?");
                             return false;
                         }
-                        else if (args_File_Player_Nation_value!=Player_Nation_value)
+                        else if (!args_File_Player_Nation_value.equals(Player_Nation_value))
                         {
                             Sender.sendMessage(ChatColor.YELLOW+"他是别的国家的公民，你是不是没事做？");
                             return false;
