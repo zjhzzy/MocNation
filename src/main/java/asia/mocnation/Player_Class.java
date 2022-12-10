@@ -13,4 +13,6 @@ public class Player_Class {
     boolean State_Speaker = false;
     // 职务
     String Office = null;
+    // 是否接到邀请加入国家
+    boolean join = false;
 }

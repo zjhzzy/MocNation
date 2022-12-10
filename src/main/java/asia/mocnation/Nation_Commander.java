@@ -8,11 +8,13 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -131,6 +133,7 @@ public class Nation_Commander implements CommandExecutor
                 return false;
             }
         }
+        /* Nation ism [主义]*/
         else if (Objects.equals(args[0], "ism"))
         {
             if (Objects.equals(args[1], "?") || Objects.equals(args[1], "？"))
@@ -159,6 +162,7 @@ public class Nation_Commander implements CommandExecutor
                 return false;
             }
         }
+        /* Nation war true/false */
         else if (Objects.equals(args[0], "war"))
         {
             if (args[1] == "?"||args[1]=="？")
@@ -199,7 +203,7 @@ public class Nation_Commander implements CommandExecutor
                 return false;
             }
         }
-        // Nation add [玩家名字] <职位>
+        /* Nation add [玩家名字] <职位> */
         else if (Objects.equals(args[0], "add"))
         {
             if (args[1]=="？"||args[1]=="?")
@@ -213,7 +217,40 @@ public class Nation_Commander implements CommandExecutor
             {
                 if (args[1]!= null&&Player_Nation_value!=null)
                 {
-                    // 下午完善
+                    // 传入的玩家名字的参数，在文件中是否在其他国家内
+                    String args_File_Player_Nation_value = PlayerConfig.getString(args[1]+".Nation_Name",null);
+                    // 传入的玩家是否存在于文件
+                    String args_File_Player_Name_value = PlayerConfig.getString(args[1]+".Name",null);
+                    // 玩家要存在，不属于其他国家
+                    if (args_File_Player_Nation_value==null&&args_File_Player_Name_value!=null)
+                    {
+                        // 向玩家发送邀请
+                        PlayerConfig.set(args[1]+".join",true);
+                    }
+                    // 如果玩家所在国家不为空
+                    else if (args_File_Player_Nation_value!=null)
+                    {
+                        if (args[1]==Player_Name_value)
+                        {
+                            Sender.sendMessage(ChatColor.YELLOW+"我尼玛，你是sb吗？自己邀请自己？给我找BUG？");
+                            return false;
+                        }
+                        else if (args_File_Player_Nation_value==Player_Nation_value)
+                        {
+                            Sender.sendMessage(ChatColor.YELLOW+"你自己家的人，你没事邀请啥啊?");
+                            return false;
+                        }
+                        else if (args_File_Player_Nation_value!=Player_Nation_value)
+                        {
+                            Sender.sendMessage(ChatColor.YELLOW+"他是别的国家的公民，你是不是没事做？");
+                            return false;
+                        }
+                    }
+                    else if (args_File_Player_Name_value==null)
+                    {
+                        Sender.sendMessage(ChatColor.YELLOW+"这应该算是BUG还是啥，我也不清楚，是不是你把名字输错了啊？");
+                        return false;
+                    }
                 }
             }
         }
@@ -237,5 +274,49 @@ public class Nation_Commander implements CommandExecutor
             throw new RuntimeException(e);
         }
         return true;
+    }
+    public List<String> onTabComplete(CommandSender Sender, Command cmd, String label, String[] args)
+    {
+        File NationFile = new File("nation.yml");
+        FileConfiguration NationConfig = YamlConfiguration.loadConfiguration(NationFile);
+        File PlayerFile = new File("player.yml");
+        FileConfiguration PlayerConfig = YamlConfiguration.loadConfiguration(PlayerFile);
+        /* 玩家所在的国家 为null就不在国家内 */
+        String Player_Nation_value = PlayerConfig.getString(Sender.getName()+".Nation_Name",null);
+        if (args.length==1)
+        {
+            String[] NationString = {"help","create","ism","war","add","del","tpset","show"};
+            List<String> NationList = List.of(NationString);
+            return NationList;
+        }
+        else if (args.length==2)
+        {
+            if (args[1]=="create")
+            {
+                return Collections.singletonList("[国家名]");
+            }
+            else if (args[1]=="ism")
+            {
+                return Collections.singletonList("[意识形态]");
+            }
+            else if (args[1]=="war")
+            {
+                return Collections.singletonList("[true/false]");
+            }
+            else if (args[1]=="del")
+            {
+                /* 国家的玩家列表 */
+                return NationConfig.getStringList(Player_Nation_value+".Playerlist");
+            }
+            else if (args[1]=="tpset")
+            {
+                return null;
+            }
+            else if (args[1]=="show")
+            {
+                return NationConfig.getStringList("NationList");
+            }
+        }
+        return null;
     }
 }
