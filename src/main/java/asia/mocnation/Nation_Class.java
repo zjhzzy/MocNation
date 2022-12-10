@@ -15,6 +15,8 @@ public class Nation_Class {
     String Lender = null;
     // 对外政策
     String Mode = "和平外交";
+    // 建立时间
+    String Time = null;
     // 国家话事人
     List<String> State_Speaker;
     // 国家内的玩家
