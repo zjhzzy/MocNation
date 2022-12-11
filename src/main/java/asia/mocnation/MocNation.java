@@ -12,8 +12,8 @@ public final class MocNation extends JavaPlugin {
     @Override
     public void onEnable() {
         getLogger().info(ChatColor.AQUA+"MocNation插件启动成功！！！");
-        if (Bukkit.getPluginCommand("Nation") != null) {
-            Bukkit.getPluginCommand("Nation").setExecutor(new Nation_Commander());
+        if (Bukkit.getPluginCommand("nat") != null) {
+            Bukkit.getPluginCommand("nat").setExecutor(new Nation_Commander());
         }
         // Plugin startup logic
     }
