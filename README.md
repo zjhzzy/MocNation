@@ -1,4 +1,5 @@
 # MocNation
+[![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 ---
 ### 一个简单的我的世界插件
 开源的代码只是用来学习和借鉴的\
